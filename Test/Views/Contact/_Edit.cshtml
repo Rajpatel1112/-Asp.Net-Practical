@@ -1,0 +1,89 @@
+﻿@model Contact
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Contact</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="Edit" method="post" id="editForm">
+                <input type="hidden" name="Id" value="@Model.Id" />
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="Name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="Name" name="Name" value="@Model.Name" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="Email" name="Email" value="@Model.Email" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Phone" class="form-label">Phone No.</label>
+                        <input type="text" class="form-control" id="Phone" name="Phone" value="@Model.Phone" pattern="\d{10}" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Address" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="Address" name="Address" value="@Model.Address" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="State" class="form-label">State</label>
+                        <select class="form-select" id="State" name="State" required>
+                            <option value="">Select State</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="City" class="form-label">City</label>
+                        <select class="form-select" id="City" name="City" required>
+                            <option value="">Select City</option>
+                            <!-- Cities will be populated by JavaScript -->
+                        </select>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="Agree" name="Agree" required />
+                        <label class="form-check-label" for="Agree">I agree</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="submitButton" disabled>Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Populate city options based on the selected state
+        function updateCityOptions() {
+            var state = $('#State').val();
+            var cities = {
+                'Gujarat': ['Surat', 'Bardoli', 'Baroda'],
+                'Maharashtra': ['Mumbai', 'Pune']
+            };
+            var cityOptions = '<option value="">Select City</option>';
+            if (state) {
+                cities[state].forEach(function (city) {
+                    cityOptions += `<option value="${city}" ${city === '@Model.City' ? "selected" : ""}>${city}</option>`;
+                });
+            }
+            $('#City').html(cityOptions);
+        }
+
+        // Initialize city options on page load
+        updateCityOptions();
+
+        // Update city options when the state is changed
+        $('#State').change(function () {
+            updateCityOptions();
+        });
+
+        // Enable or disable the submit button based on the checkbox
+        $('#Agree').change(function () {
+            $('#submitButton').prop('disabled', !this.checked);
+        });
+    });
+</script>
